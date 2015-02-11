@@ -7,10 +7,25 @@
  * Create an Apple-like website that let user scroll
  * one page at a time
  *
+ * This fork create by Erin Keeffe:
+ * - http://erin.io
+ * - https://github.com/erindotio
+ *
+ * Includes disable(), enable() functionality added by Alexey Sachov:
+ * https://gist.github.com/AlexeySachkov/7c526e6729fee936acde
+ * From issue #229: https://github.com/peachananr/onepage-scroll/issues/229
+ *
+ * ...as well as the preventDefault() fix for touch devices from makersunion:
+ * https://github.com/peachananr/onepage-scroll/issues/183
+ *
+ *
  * Credit: Eike Send for the awesome swipe event
  * https://github.com/peachananr/onepage-scroll
  *
  * License: GPL v3
+ *
+ * Updated by Alexey Sachkov, 2015
+ * Added disable/enable scroll feature
  *
  * ========================================================== */
 
@@ -53,11 +68,13 @@
         }
 
         function touchmove(event) {
-          var touches = event.originalEvent.touches;
+          if (disabled)
+            return;
+          var deltaX, deltaY, touches;
+          touches = event.originalEvent.touches;
           if (touches && touches.length) {
-            var deltaX = startX - touches[0].pageX;
-            var deltaY = startY - touches[0].pageY;
-
+            deltaX = startX - touches[0].pageX;
+            deltaY = startY - touches[0].pageY;
             if (deltaX >= 50) {
               $this.trigger("swipeLeft");
             }
@@ -71,9 +88,10 @@
               $this.trigger("swipeDown");
             }
             if (Math.abs(deltaX) >= 50 || Math.abs(deltaY) >= 50) {
-              $this.unbind('touchmove', touchmove);
+              $this.unbind("touchmove", touchmove);
             }
           }
+          return event.preventDefault();
         }
 
       });
@@ -91,6 +109,7 @@
         lastAnimation = 0,
         quietPeriod = 500,
         paginationList = "";
+        disabled = false;
 
     $.fn.transformPage = function(settings, pos, index) {
       if (typeof settings.beforeMove == 'function') settings.beforeMove(index);
@@ -123,6 +142,8 @@
     }
 
     $.fn.moveDown = function() {
+      if (disabled)
+        return;
       var el = $(this)
       index = $(settings.sectionContainer +".active").data("index");
       current = $(settings.sectionContainer + "[data-index='" + index + "']");
@@ -157,6 +178,8 @@
     }
 
     $.fn.moveUp = function() {
+      if (disabled)
+        return;
       var el = $(this)
       index = $(settings.sectionContainer +".active").data("index");
       current = $(settings.sectionContainer + "[data-index='" + index + "']");
@@ -191,6 +214,8 @@
     }
 
     $.fn.moveTo = function(page_index) {
+      if (disabled)
+        return;
       current = $(settings.sectionContainer + ".active")
       next = $(settings.sectionContainer + "[data-index='" + (page_index) + "']");
       if(next.length > 0) {
@@ -210,6 +235,14 @@
         }
         el.transformPage(settings, pos, page_index);
       }
+    }
+
+    $.fn.disable = function() {
+      disabled = true;
+    }
+
+    $.fn.enable = function() {
+      disabled = false;
     }
 
     function responsive() {
@@ -253,9 +286,12 @@
         });
 
         $(document).bind('mousewheel DOMMouseScroll MozMousePixelScroll', function(event) {
-          event.preventDefault();
-          var delta = event.originalEvent.wheelDelta || -event.originalEvent.detail;
-          init_scroll(event, delta);
+          if (!disabled)
+          {
+            event.preventDefault();
+            var delta = event.originalEvent.wheelDelta || -event.originalEvent.detail;
+           init_scroll(event, delta);
+          }
         });
       }
     }
@@ -372,9 +408,12 @@
 
 
     $(document).bind('mousewheel DOMMouseScroll MozMousePixelScroll', function(event) {
-      event.preventDefault();
-      var delta = event.originalEvent.wheelDelta || -event.originalEvent.detail;
-      if(!$("body").hasClass("disabled-onepage-scroll")) init_scroll(event, delta);
+      if (!disabled)
+      {
+        event.preventDefault();
+        var delta = event.originalEvent.wheelDelta || -event.originalEvent.detail;
+        if(!$("body").hasClass("disabled-onepage-scroll")) init_scroll(event, delta);
+      }
     });
 
 
