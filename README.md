@@ -1,12 +1,16 @@
 #One Page Scroll 1.3.1 by Pete R.
 Create an Apple-like one page scroll website (iPhone 5S website) with One Page Scroll plugin
 
- This fork create by myself ([erin.io](http://erin.io)), which includes disable(), enable() functionality added by Alexey Sachov: 
- https://gist.github.com/AlexeySachkov/7c526e6729fee936acde 
- From issue #229: https://github.com/peachananr/onepage-scroll/issues/229 
- 
- ...as well as the preventDefault() fix for touch devices from makersunion: 
- https://github.com/peachananr/onepage-scroll/issues/183 
+This fork create by myself ([erin.io](http://erin.io)), which includes disable(), enable() functionality added by Alexey Sachov:
+
+https://gist.github.com/AlexeySachkov/7c526e6729fee936acde
+
+From issue #229: https://github.com/peachananr/onepage-scroll/issues/229 
+
+...as well as the preventDefault() fix for touch devices from makersunion:
+
+https://github.com/peachananr/onepage-scroll/issues/183 
+
 
 Created by [Pete R.](http://www.thepetedesign.com), Founder of [BucketListly](http://www.bucketlistly.com)
 
